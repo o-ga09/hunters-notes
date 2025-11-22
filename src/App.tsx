@@ -29,6 +29,7 @@ import { GeminiService } from './services/gemin'
 import { MonsterCard } from './components/MonsterCard'
 import { MonsterDetail } from './components/MonsterDetail'
 import { Loader } from './components/Loader'
+import { Pagination } from './components/Pagination'
 import { useMonsters } from './hooks/useMonsters'
 import { convertApiMonstersToMonsters } from './utils/monsterConverter'
 
@@ -208,7 +209,11 @@ const ELEMENT_CONFIG: Record<
 }
 
 export default function App() {
-  // API Data
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1)
+  const ITEMS_PER_PAGE = 20
+
+  // API Data - すべてのデータを取得（クライアントサイドページネーション）
   const { monsters: apiMonsters, isLoading: apiLoading, error: apiError } = useMonsters()
 
   // State - Initialize theme from localStorage or system preference
@@ -229,6 +234,17 @@ export default function App() {
   const [sortOption, setSortOption] = useState<SortOption>('default')
   const [showFilters, setShowFilters] = useState(false)
 
+  // フィルタやソート変更時にページをリセット
+  const handleFilterChange = (element: string) => {
+    setFilterElement(element)
+    setCurrentPage(1)
+  }
+
+  const handleSortChange = (option: SortOption) => {
+    setSortOption(option)
+    setCurrentPage(1)
+  }
+
   // View Transition
   const [transitionId, setTransitionId] = useState<string | null>(null)
 
@@ -239,8 +255,8 @@ export default function App() {
     return convertedApiMonsters.length > 0 ? convertedApiMonsters : INITIAL_MONSTERS_DATA
   }, [apiMonsters])
 
-  // Apply Derived State
-  const filteredMonsters = monsters
+  // Apply Derived State - フィルタとソート
+  const allFilteredMonsters = monsters
     .filter(m => {
       const matchesSearch =
         m.name.includes(searchQuery) ||
@@ -269,6 +285,15 @@ export default function App() {
       }
     })
 
+  // ページネーション用の計算
+  const totalFilteredItems = allFilteredMonsters.length
+  const totalPages = Math.ceil(totalFilteredItems / ITEMS_PER_PAGE)
+
+  // 現在のページに表示するデータ
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const filteredMonsters = allFilteredMonsters.slice(startIndex, endIndex)
+
   const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newTheme = e.target.value as Theme
     setTheme(newTheme)
@@ -290,6 +315,9 @@ export default function App() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!searchQuery.trim()) return
+
+    // 検索時はページをリセット
+    setCurrentPage(1)
 
     const existing = monsters.find(m => m.name === searchQuery || m.name.includes(searchQuery))
     if (existing) {
@@ -351,6 +379,7 @@ export default function App() {
   const clearSearch = () => {
     setSearchQuery('')
     setError(null)
+    setCurrentPage(1)
   }
 
   return (
@@ -461,7 +490,7 @@ export default function App() {
                         return (
                           <button
                             key={key}
-                            onClick={() => setFilterElement(key)}
+                            onClick={() => handleFilterChange(key)}
                             title={config.label}
                             className={`
                                     relative group flex flex-col items-center justify-center min-w-[36px] w-9 h-9 sm:w-10 sm:h-10 rounded-lg border transition-all duration-300
@@ -492,7 +521,7 @@ export default function App() {
                       <ArrowDownUp className="w-3 h-3 text-stone-500 absolute left-2 top-1/2 -translate-y-1/2" />
                       <select
                         value={sortOption}
-                        onChange={e => setSortOption(e.target.value as SortOption)}
+                        onChange={e => handleSortChange(e.target.value as SortOption)}
                         className="w-full bg-stone-200/80 dark:bg-stone-800/80 text-stone-700 dark:text-stone-300 text-xs py-1.5 pl-7 pr-2 rounded border border-stone-300 dark:border-stone-700 focus:ring-1 focus:ring-yellow-600 outline-none cursor-pointer hover:bg-stone-300 dark:hover:bg-stone-700 transition-colors"
                       >
                         <option value="default">標準</option>
@@ -541,32 +570,44 @@ export default function App() {
                   <MonsterDetail monster={selectedMonster} />
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 pb-8">
-                  {filteredMonsters.map(monster => (
-                    <MonsterCard
-                      key={monster.name}
-                      monster={monster}
-                      onClick={() => handleSelectMonster(monster)}
-                      activeTransition={transitionId === monster.name}
-                    />
-                  ))}
+                <>
+                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 pb-8">
+                    {filteredMonsters.map(monster => (
+                      <MonsterCard
+                        key={monster.name}
+                        monster={monster}
+                        onClick={() => handleSelectMonster(monster)}
+                        activeTransition={transitionId === monster.name}
+                      />
+                    ))}
 
-                  {filteredMonsters.length === 0 && (
-                    <div className="col-span-full flex flex-col items-center justify-center py-20 text-stone-500 dark:text-stone-600 font-mincho">
-                      <Filter className="w-12 h-12 mb-4 opacity-20" />
-                      <p className="text-lg">条件に一致するモンスターが見つかりません。</p>
-                      <button
-                        onClick={() => {
-                          setFilterElement('All')
-                          setSearchQuery('')
-                        }}
-                        className="mt-4 px-4 py-2 text-sm bg-stone-200 dark:bg-stone-800 rounded hover:bg-stone-300 dark:hover:bg-stone-700"
-                      >
-                        条件をリセット
-                      </button>
-                    </div>
-                  )}
-                </div>
+                    {filteredMonsters.length === 0 && (
+                      <div className="col-span-full flex flex-col items-center justify-center py-20 text-stone-500 dark:text-stone-600 font-mincho">
+                        <Filter className="w-12 h-12 mb-4 opacity-20" />
+                        <p className="text-lg">条件に一致するモンスターが見つかりません。</p>
+                        <button
+                          onClick={() => {
+                            setFilterElement('All')
+                            setSearchQuery('')
+                            setCurrentPage(1)
+                          }}
+                          className="mt-4 px-4 py-2 text-sm bg-stone-200 dark:bg-stone-800 rounded hover:bg-stone-300 dark:hover:bg-stone-700"
+                        >
+                          条件をリセット
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ページネーション */}
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    totalItems={totalFilteredItems}
+                    itemsPerPage={ITEMS_PER_PAGE}
+                  />
+                </>
               )}
             </>
           )}
