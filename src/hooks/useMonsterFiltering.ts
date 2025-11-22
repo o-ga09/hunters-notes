@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Monster } from '@/lib/types'
-import { SortOption, ITEMS_PER_PAGE, TEMPORARY_TOTAL_MONSTERS } from '@/constants/filters'
+import { SortOption, ITEMS_PER_PAGE } from '@/constants/filters'
 
 interface UseMonsterFilteringParams {
   monsters: Monster[]
@@ -54,11 +54,7 @@ export const useMonsterFiltering = ({
   }, [monsters, searchQuery, filterElement, sortOption])
 
   // ページネーション計算
-  const totalFilteredItems = hasActiveFilters
-    ? allFilteredMonsters.length
-    : apiTotal && apiTotal > ITEMS_PER_PAGE
-      ? apiTotal
-      : TEMPORARY_TOTAL_MONSTERS
+  const totalFilteredItems = hasActiveFilters ? allFilteredMonsters.length : (apiTotal ?? 0)
 
   const totalPages = Math.ceil(totalFilteredItems / ITEMS_PER_PAGE)
 
