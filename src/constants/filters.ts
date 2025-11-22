@@ -38,4 +38,3 @@ export const ELEMENT_CONFIG: Record<
 }
 
 export const ITEMS_PER_PAGE = 20
-export const TEMPORARY_TOTAL_MONSTERS = 250
