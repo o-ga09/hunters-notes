@@ -17,7 +17,7 @@ import { useTheme } from '@/hooks/useTheme'
 import { useFilters } from '@/hooks/useFilters'
 import { useMonsterFiltering } from '@/hooks/useMonsterFiltering'
 import { convertApiMonstersToMonsters } from '@/utils/monsterConverter'
-import { ITEMS_PER_PAGE } from '@/constants/filters'
+import { ITEMS_PER_PAGE, SortOption } from '@/constants/filters'
 
 export const MonsterListPage: FC = () => {
   const navigate = useNavigate()
@@ -91,8 +91,8 @@ export const MonsterListPage: FC = () => {
     updatePage(1)
   }
 
-  const handleSortChange = (option: string) => {
-    setSortOption(option as any)
+  const handleSortChange = (option: SortOption) => {
+    setSortOption(option)
     updatePage(1)
   }
 
@@ -127,7 +127,7 @@ export const MonsterListPage: FC = () => {
         setError('該当するモンスターが見つかりませんでした。')
       }
     } catch (err) {
-      setError('データの取得中にエラーが発生しました。')
+      setError(`データの取得中にエラーが発生しました。: ${(err as Error).message}`)
     } finally {
       setLoading(false)
     }
