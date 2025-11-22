@@ -5,9 +5,7 @@
  * モンスターハンターAPI
  * OpenAPI spec version: v0.1.0
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -17,207 +15,260 @@ import type {
   QueryKey,
   UndefinedInitialDataOptions,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from '@tanstack/react-query'
 
 import type {
   GetMonstersParams,
   MonsterMessageResponse,
   MonsterMonster,
-  MonsterMonsters
-} from '../mhApi.schemas';
+  MonsterMonsters,
+} from '../mhApi.schemas'
 
-import { customInstance } from '../../custom-instance';
+import { customInstance } from '../../custom-instance'
 
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 /**
  * モンスターを検索して、条件に合致するモンスターを複数件取得する
  * @summary モンスター検索（複数件）
  */
 export const getMonsters = (
-    params?: GetMonstersParams,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  params?: GetMonstersParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return customInstance<MonsterMonsters>(
-      {url: `/monsters`, method: 'GET',
-        params, signal
-    },
-      options);
-    }
-  
+  return customInstance<MonsterMonsters>(
+    { url: `/monsters`, method: 'GET', params, signal },
+    options
+  )
+}
 
+export const getGetMonstersQueryKey = (params?: GetMonstersParams) => {
+  return [`/monsters`, ...(params ? [params] : [])] as const
+}
 
-
-export const getGetMonstersQueryKey = (params?: GetMonstersParams,) => {
-    return [
-    `/monsters`, ...(params ? [params]: [])
-    ] as const;
-    }
-
-    
-export const getGetMonstersQueryOptions = <TData = Awaited<ReturnType<typeof getMonsters>>, TError = MonsterMessageResponse>(params?: GetMonstersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetMonstersQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMonsters>>,
+  TError = MonsterMessageResponse,
+>(
+  params?: GetMonstersParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  }
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetMonstersQueryKey(params)
 
-  const queryKey =  queryOptions?.queryKey ?? getGetMonstersQueryKey(params);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMonsters>>> = ({ signal }) =>
+    getMonsters(params, requestOptions, signal)
 
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMonsters>>> = ({ signal }) => getMonsters(params, requestOptions, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMonsters>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetMonstersQueryResult = NonNullable<Awaited<ReturnType<typeof getMonsters>>>
 export type GetMonstersQueryError = MonsterMessageResponse
 
-
-export function useGetMonsters<TData = Awaited<ReturnType<typeof getMonsters>>, TError = MonsterMessageResponse>(
- params: undefined |  GetMonstersParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>> & Pick<
+export function useGetMonsters<
+  TData = Awaited<ReturnType<typeof getMonsters>>,
+  TError = MonsterMessageResponse,
+>(
+  params: undefined | GetMonstersParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>> &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMonsters>>,
           TError,
           Awaited<ReturnType<typeof getMonsters>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMonsters<TData = Awaited<ReturnType<typeof getMonsters>>, TError = MonsterMessageResponse>(
- params?: GetMonstersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>> & Pick<
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMonsters<
+  TData = Awaited<ReturnType<typeof getMonsters>>,
+  TError = MonsterMessageResponse,
+>(
+  params?: GetMonstersParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>> &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMonsters>>,
           TError,
           Awaited<ReturnType<typeof getMonsters>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMonsters<TData = Awaited<ReturnType<typeof getMonsters>>, TError = MonsterMessageResponse>(
- params?: GetMonstersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMonsters<
+  TData = Awaited<ReturnType<typeof getMonsters>>,
+  TError = MonsterMessageResponse,
+>(
+  params?: GetMonstersParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary モンスター検索（複数件）
  */
 
-export function useGetMonsters<TData = Awaited<ReturnType<typeof getMonsters>>, TError = MonsterMessageResponse>(
- params?: GetMonstersParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetMonsters<
+  TData = Awaited<ReturnType<typeof getMonsters>>,
+  TError = MonsterMessageResponse,
+>(
+  params?: GetMonstersParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonsters>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetMonstersQueryOptions(params, options)
 
-  const queryOptions = getGetMonstersQueryOptions(params,options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  query.queryKey = queryOptions.queryKey
 
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
+  return query
 }
-
-
-
 
 /**
  * モンスターを検索して、条件に合致するモンスターを1件取得する
  * @summary モンスター検索（1件）
  */
 export const getMonstersMonsterid = (
-    
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return customInstance<MonsterMonster>(
-      {url: `/monsters/:monsterid`, method: 'GET', signal
-    },
-      options);
-    }
-  
-
-
-
-export const getGetMonstersMonsteridQueryKey = () => {
-    return [
-    `/monsters/:monsterid`
-    ] as const;
-    }
-
-    
-export const getGetMonstersMonsteridQueryOptions = <TData = Awaited<ReturnType<typeof getMonstersMonsterid>>, TError = MonsterMessageResponse>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetMonstersMonsteridQueryKey();
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getMonstersMonsterid>>> = ({ signal }) => getMonstersMonsterid(requestOptions, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+  return customInstance<MonsterMonster>(
+    { url: `/monsters/:monsterid`, method: 'GET', signal },
+    options
+  )
 }
 
-export type GetMonstersMonsteridQueryResult = NonNullable<Awaited<ReturnType<typeof getMonstersMonsterid>>>
+export const getGetMonstersMonsteridQueryKey = () => {
+  return [`/monsters/:monsterid`] as const
+}
+
+export const getGetMonstersMonsteridQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMonstersMonsterid>>,
+  TError = MonsterMessageResponse,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>>
+  request?: SecondParameter<typeof customInstance>
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
+
+  const queryKey = queryOptions?.queryKey ?? getGetMonstersMonsteridQueryKey()
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMonstersMonsterid>>> = ({ signal }) =>
+    getMonstersMonsterid(requestOptions, signal)
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMonstersMonsterid>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetMonstersMonsteridQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMonstersMonsterid>>
+>
 export type GetMonstersMonsteridQueryError = MonsterMessageResponse
 
-
-export function useGetMonstersMonsterid<TData = Awaited<ReturnType<typeof getMonstersMonsterid>>, TError = MonsterMessageResponse>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>> & Pick<
+export function useGetMonstersMonsterid<
+  TData = Awaited<ReturnType<typeof getMonstersMonsterid>>,
+  TError = MonsterMessageResponse,
+>(
+  options: {
+    query: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMonstersMonsterid>>,
           TError,
           Awaited<ReturnType<typeof getMonstersMonsterid>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMonstersMonsterid<TData = Awaited<ReturnType<typeof getMonstersMonsterid>>, TError = MonsterMessageResponse>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>> & Pick<
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMonstersMonsterid<
+  TData = Awaited<ReturnType<typeof getMonstersMonsterid>>,
+  TError = MonsterMessageResponse,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getMonstersMonsterid>>,
           TError,
           Awaited<ReturnType<typeof getMonstersMonsterid>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetMonstersMonsterid<TData = Awaited<ReturnType<typeof getMonstersMonsterid>>, TError = MonsterMessageResponse>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetMonstersMonsterid<
+  TData = Awaited<ReturnType<typeof getMonstersMonsterid>>,
+  TError = MonsterMessageResponse,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary モンスター検索（1件）
  */
 
-export function useGetMonstersMonsterid<TData = Awaited<ReturnType<typeof getMonstersMonsterid>>, TError = MonsterMessageResponse>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
+export function useGetMonstersMonsterid<
+  TData = Awaited<ReturnType<typeof getMonstersMonsterid>>,
+  TError = MonsterMessageResponse,
+>(
+  options?: {
+    query?: Partial<
+      UseQueryOptions<Awaited<ReturnType<typeof getMonstersMonsterid>>, TError, TData>
+    >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetMonstersMonsteridQueryOptions(options)
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
 
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey
 
-  return query;
+  return query
 }
-
-
-
-

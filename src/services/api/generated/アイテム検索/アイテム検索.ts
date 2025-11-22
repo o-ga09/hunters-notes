@@ -5,9 +5,7 @@
  * モンスターハンターAPI
  * OpenAPI spec version: v0.1.0
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -17,113 +15,129 @@ import type {
   QueryKey,
   UndefinedInitialDataOptions,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from '@tanstack/react-query'
 
-import type {
-  GetItemsItemIdParams,
-  ItemItem,
-  ItemMessageResponse
-} from '../mhApi.schemas';
+import type { GetItemsItemIdParams, ItemItem, ItemMessageResponse } from '../mhApi.schemas'
 
-import { customInstance } from '../../custom-instance';
+import { customInstance } from '../../custom-instance'
 
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 /**
  * アイテムを検索して、条件に合致するアイテムを1件取得する
  * @summary アイテム検索（1件）
  */
 export const getItemsItemId = (
-    params?: GetItemsItemIdParams,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  params?: GetItemsItemIdParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return customInstance<ItemItem>(
-      {url: `/items/:itemId`, method: 'GET',
-        params, signal
-    },
-      options);
-    }
-  
+  return customInstance<ItemItem>({ url: `/items/:itemId`, method: 'GET', params, signal }, options)
+}
 
+export const getGetItemsItemIdQueryKey = (params?: GetItemsItemIdParams) => {
+  return [`/items/:itemId`, ...(params ? [params] : [])] as const
+}
 
-
-export const getGetItemsItemIdQueryKey = (params?: GetItemsItemIdParams,) => {
-    return [
-    `/items/:itemId`, ...(params ? [params]: [])
-    ] as const;
-    }
-
-    
-export const getGetItemsItemIdQueryOptions = <TData = Awaited<ReturnType<typeof getItemsItemId>>, TError = ItemMessageResponse>(params?: GetItemsItemIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetItemsItemIdQueryOptions = <
+  TData = Awaited<ReturnType<typeof getItemsItemId>>,
+  TError = ItemMessageResponse,
+>(
+  params?: GetItemsItemIdParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  }
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetItemsItemIdQueryKey(params)
 
-  const queryKey =  queryOptions?.queryKey ?? getGetItemsItemIdQueryKey(params);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getItemsItemId>>> = ({ signal }) =>
+    getItemsItemId(params, requestOptions, signal)
 
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getItemsItemId>>> = ({ signal }) => getItemsItemId(params, requestOptions, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getItemsItemId>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetItemsItemIdQueryResult = NonNullable<Awaited<ReturnType<typeof getItemsItemId>>>
 export type GetItemsItemIdQueryError = ItemMessageResponse
 
-
-export function useGetItemsItemId<TData = Awaited<ReturnType<typeof getItemsItemId>>, TError = ItemMessageResponse>(
- params: undefined |  GetItemsItemIdParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>> & Pick<
+export function useGetItemsItemId<
+  TData = Awaited<ReturnType<typeof getItemsItemId>>,
+  TError = ItemMessageResponse,
+>(
+  params: undefined | GetItemsItemIdParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>> &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getItemsItemId>>,
           TError,
           Awaited<ReturnType<typeof getItemsItemId>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetItemsItemId<TData = Awaited<ReturnType<typeof getItemsItemId>>, TError = ItemMessageResponse>(
- params?: GetItemsItemIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>> & Pick<
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetItemsItemId<
+  TData = Awaited<ReturnType<typeof getItemsItemId>>,
+  TError = ItemMessageResponse,
+>(
+  params?: GetItemsItemIdParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>> &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getItemsItemId>>,
           TError,
           Awaited<ReturnType<typeof getItemsItemId>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetItemsItemId<TData = Awaited<ReturnType<typeof getItemsItemId>>, TError = ItemMessageResponse>(
- params?: GetItemsItemIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetItemsItemId<
+  TData = Awaited<ReturnType<typeof getItemsItemId>>,
+  TError = ItemMessageResponse,
+>(
+  params?: GetItemsItemIdParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary アイテム検索（1件）
  */
 
-export function useGetItemsItemId<TData = Awaited<ReturnType<typeof getItemsItemId>>, TError = ItemMessageResponse>(
- params?: GetItemsItemIdParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetItemsItemId<
+  TData = Awaited<ReturnType<typeof getItemsItemId>>,
+  TError = ItemMessageResponse,
+>(
+  params?: GetItemsItemIdParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getItemsItemId>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetItemsItemIdQueryOptions(params, options)
 
-  const queryOptions = getGetItemsItemIdQueryOptions(params,options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  query.queryKey = queryOptions.queryKey
 
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
+  return query
 }
-
-
-
-

@@ -6,147 +6,146 @@
  * OpenAPI spec version: v0.1.0
  */
 export interface ItemItem {
-  item?: ItemResponseJson;
+  item?: ItemResponseJson
 }
 
 export interface ItemMessageResponse {
-  message?: string;
+  message?: string
 }
 
 export interface ItemResponseJson {
-  item_id?: string;
-  item_name?: string;
+  item_id?: string
+  item_name?: string
 }
 
 export interface MonsterMessageResponse {
-  message?: string;
+  message?: string
 }
 
 export interface MonsterMonster {
-  monster?: MonsterResponseJson;
+  monster?: MonsterResponseJson
 }
 
 export interface MonsterMonsters {
-  limit?: number;
-  monsters?: MonsterResponseJson[];
-  offset?: number;
-  total?: number;
+  limit?: number
+  monsters?: MonsterResponseJson[]
+  offset?: number
+  total?: number
 }
 
 export interface MonsterMusic {
-  name?: string;
-  url?: string;
+  name?: string
+  url?: string
 }
 
 export interface MonsterRanking {
-  ranking?: string;
-  vote_year?: string;
+  ranking?: string
+  vote_year?: string
 }
 
 export interface MonsterResponseJson {
   /** モンスター別名 */
-  another_name?: string;
+  another_name?: string
   /** BGM */
-  bgm?: MonsterMusic[];
+  bgm?: MonsterMusic[]
   /** モンスターのカテゴリ */
-  category?: string;
+  category?: string
   /** モンスターの属性 */
-  element?: string;
+  element?: string
   /** 最有効弱点 */
-  first_weak_attack?: string;
+  first_weak_attack?: string
   /** 最有効属性 */
-  first_weak_element?: string;
+  first_weak_element?: string
   /** モンスター画像URL */
-  image_url?: string;
+  image_url?: string
   /** モンスターの出現場所 */
-  location?: string[];
+  location?: string[]
   /** モンスターID */
-  monster_id?: string;
+  monster_id?: string
   /** モンスター名 */
-  name?: string;
+  name?: string
   /** 人気投票ランキング */
-  ranking?: MonsterRanking[];
+  ranking?: MonsterRanking[]
   /** 2番目に有効な弱点 */
-  second_weak_attack?: string;
+  second_weak_attack?: string
   /** 2番目に有効な属性 */
-  second_weak_element?: string;
+  second_weak_element?: string
   /** 登場作品 */
-  title?: string[];
+  title?: string[]
   /** 弱点肉質（物理） */
-  weakness_attack?: MonsterWeaknessAttack[];
+  weakness_attack?: MonsterWeaknessAttack[]
   /** 弱点肉質（属性） */
-  weakness_element?: MonsterWeaknessElement[];
+  weakness_element?: MonsterWeaknessElement[]
 }
 
 export interface MonsterWeaknessAttack {
-  blow?: string;
-  bullet?: string;
-  slashing?: string;
+  blow?: string
+  bullet?: string
+  slashing?: string
 }
 
 export interface MonsterWeaknessElement {
-  dragon?: string;
-  fire?: string;
-  ice?: string;
-  thunder?: string;
-  water?: string;
+  dragon?: string
+  fire?: string
+  ice?: string
+  thunder?: string
+  water?: string
 }
 
 export interface WeaponMessageResponse {
-  message?: string;
+  message?: string
 }
 
 export interface WeaponResponseJson {
-  attack?: string;
-  critical?: string;
-  description?: string;
-  elemant_attaxk?: string;
-  image_url?: string;
-  monster_id?: string;
-  name?: string;
-  rare?: string;
-  shapness?: string;
+  attack?: string
+  critical?: string
+  description?: string
+  elemant_attaxk?: string
+  image_url?: string
+  monster_id?: string
+  name?: string
+  rare?: string
+  shapness?: string
 }
 
 export interface WeaponWeapon {
-  monster?: WeaponResponseJson;
+  monster?: WeaponResponseJson
 }
 
 export type GetItemsItemIdParams = {
-item_name?: string;
-item_name_kana?: string;
-limit?: number;
-monster_id?: string;
-offset?: number;
-order?: number;
-sort?: string;
-};
+  item_name?: string
+  item_name_kana?: string
+  limit?: number
+  monster_id?: string
+  offset?: number
+  order?: number
+  sort?: string
+}
 
 export type GetMonstersParams = {
-MonsterIds?: string;
-MonsterName?: string;
-limit?: number;
-offset?: number;
-sort?: string;
-};
+  MonsterIds?: string
+  MonsterName?: string
+  limit?: number
+  offset?: number
+  sort?: string
+}
 
 export type GetWeaponsParams = {
-limit?: number;
-monster_id?: string;
-name?: string;
-name_kana?: string;
-offset?: number;
-order?: number;
-sort?: string;
-};
+  limit?: number
+  monster_id?: string
+  name?: string
+  name_kana?: string
+  offset?: number
+  order?: number
+  sort?: string
+}
 
 export type GetWeaponsBgmidParams = {
-limit?: number;
-monster_id?: string;
-name?: string;
-name_kana?: string;
-offset?: number;
-order?: number;
-sort?: string;
-};
-
+  limit?: number
+  monster_id?: string
+  name?: string
+  name_kana?: string
+  offset?: number
+  order?: number
+  sort?: string
+}

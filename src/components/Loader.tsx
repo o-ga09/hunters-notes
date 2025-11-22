@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 export const Loader: React.FC = () => {
   return (
@@ -8,7 +8,7 @@ export const Loader: React.FC = () => {
       <div className="absolute inset-2 border-4 border-stone-700 rounded-full opacity-50"></div>
       <div
         className="absolute inset-2 border-4 border-b-orange-700 border-t-transparent border-l-transparent border-r-transparent rounded-full animate-spin"
-        style={{ animationDirection: "reverse", animationDuration: "1.5s" }}
+        style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}
       ></div>
 
       {/* Center Emblem */}
@@ -16,5 +16,5 @@ export const Loader: React.FC = () => {
         <div className="w-8 h-8 bg-yellow-900 rotate-45 transform shadow-lg border border-yellow-600"></div>
       </div>
     </div>
-  );
-};
+  )
+}

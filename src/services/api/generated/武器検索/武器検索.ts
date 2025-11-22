@@ -5,9 +5,7 @@
  * モンスターハンターAPI
  * OpenAPI spec version: v0.1.0
  */
-import {
-  useQuery
-} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -17,208 +15,255 @@ import type {
   QueryKey,
   UndefinedInitialDataOptions,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from '@tanstack/react-query'
 
 import type {
   GetWeaponsBgmidParams,
   GetWeaponsParams,
   WeaponMessageResponse,
-  WeaponWeapon
-} from '../mhApi.schemas';
+  WeaponWeapon,
+} from '../mhApi.schemas'
 
-import { customInstance } from '../../custom-instance';
+import { customInstance } from '../../custom-instance'
 
-
-type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
-
-
+type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1]
 
 /**
  * 武器を検索して、条件に合致する武器を複数件取得する
  * @summary 武器検索（複数件）
  */
 export const getWeapons = (
-    params?: GetWeaponsParams,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  params?: GetWeaponsParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return customInstance<WeaponWeapon>(
-      {url: `/weapons`, method: 'GET',
-        params, signal
-    },
-      options);
-    }
-  
+  return customInstance<WeaponWeapon>({ url: `/weapons`, method: 'GET', params, signal }, options)
+}
 
+export const getGetWeaponsQueryKey = (params?: GetWeaponsParams) => {
+  return [`/weapons`, ...(params ? [params] : [])] as const
+}
 
-
-export const getGetWeaponsQueryKey = (params?: GetWeaponsParams,) => {
-    return [
-    `/weapons`, ...(params ? [params]: [])
-    ] as const;
-    }
-
-    
-export const getGetWeaponsQueryOptions = <TData = Awaited<ReturnType<typeof getWeapons>>, TError = WeaponMessageResponse>(params?: GetWeaponsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetWeaponsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWeapons>>,
+  TError = WeaponMessageResponse,
+>(
+  params?: GetWeaponsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  }
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetWeaponsQueryKey(params)
 
-  const queryKey =  queryOptions?.queryKey ?? getGetWeaponsQueryKey(params);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWeapons>>> = ({ signal }) =>
+    getWeapons(params, requestOptions, signal)
 
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWeapons>>> = ({ signal }) => getWeapons(params, requestOptions, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWeapons>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetWeaponsQueryResult = NonNullable<Awaited<ReturnType<typeof getWeapons>>>
 export type GetWeaponsQueryError = WeaponMessageResponse
 
-
-export function useGetWeapons<TData = Awaited<ReturnType<typeof getWeapons>>, TError = WeaponMessageResponse>(
- params: undefined |  GetWeaponsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>> & Pick<
+export function useGetWeapons<
+  TData = Awaited<ReturnType<typeof getWeapons>>,
+  TError = WeaponMessageResponse,
+>(
+  params: undefined | GetWeaponsParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>> &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWeapons>>,
           TError,
           Awaited<ReturnType<typeof getWeapons>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetWeapons<TData = Awaited<ReturnType<typeof getWeapons>>, TError = WeaponMessageResponse>(
- params?: GetWeaponsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>> & Pick<
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetWeapons<
+  TData = Awaited<ReturnType<typeof getWeapons>>,
+  TError = WeaponMessageResponse,
+>(
+  params?: GetWeaponsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>> &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWeapons>>,
           TError,
           Awaited<ReturnType<typeof getWeapons>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetWeapons<TData = Awaited<ReturnType<typeof getWeapons>>, TError = WeaponMessageResponse>(
- params?: GetWeaponsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetWeapons<
+  TData = Awaited<ReturnType<typeof getWeapons>>,
+  TError = WeaponMessageResponse,
+>(
+  params?: GetWeaponsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 武器検索（複数件）
  */
 
-export function useGetWeapons<TData = Awaited<ReturnType<typeof getWeapons>>, TError = WeaponMessageResponse>(
- params?: GetWeaponsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetWeapons<
+  TData = Awaited<ReturnType<typeof getWeapons>>,
+  TError = WeaponMessageResponse,
+>(
+  params?: GetWeaponsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeapons>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetWeaponsQueryOptions(params, options)
 
-  const queryOptions = getGetWeaponsQueryOptions(params,options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  query.queryKey = queryOptions.queryKey
 
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
+  return query
 }
-
-
-
 
 /**
  * 武器を検索して、条件に合致する武器を1件取得する
  * @summary 武器検索（1件）
  */
 export const getWeaponsBgmid = (
-    params?: GetWeaponsBgmidParams,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  params?: GetWeaponsBgmidParams,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return customInstance<WeaponWeapon>(
-      {url: `/weapons/:bgmid`, method: 'GET',
-        params, signal
-    },
-      options);
-    }
-  
+  return customInstance<WeaponWeapon>(
+    { url: `/weapons/:bgmid`, method: 'GET', params, signal },
+    options
+  )
+}
 
+export const getGetWeaponsBgmidQueryKey = (params?: GetWeaponsBgmidParams) => {
+  return [`/weapons/:bgmid`, ...(params ? [params] : [])] as const
+}
 
-
-export const getGetWeaponsBgmidQueryKey = (params?: GetWeaponsBgmidParams,) => {
-    return [
-    `/weapons/:bgmid`, ...(params ? [params]: [])
-    ] as const;
-    }
-
-    
-export const getGetWeaponsBgmidQueryOptions = <TData = Awaited<ReturnType<typeof getWeaponsBgmid>>, TError = WeaponMessageResponse>(params?: GetWeaponsBgmidParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetWeaponsBgmidQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWeaponsBgmid>>,
+  TError = WeaponMessageResponse,
+>(
+  params?: GetWeaponsBgmidParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  }
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {}
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetWeaponsBgmidQueryKey(params)
 
-  const queryKey =  queryOptions?.queryKey ?? getGetWeaponsBgmidQueryKey(params);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWeaponsBgmid>>> = ({ signal }) =>
+    getWeaponsBgmid(params, requestOptions, signal)
 
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWeaponsBgmid>>> = ({ signal }) => getWeaponsBgmid(params, requestOptions, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWeaponsBgmid>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> }
 }
 
 export type GetWeaponsBgmidQueryResult = NonNullable<Awaited<ReturnType<typeof getWeaponsBgmid>>>
 export type GetWeaponsBgmidQueryError = WeaponMessageResponse
 
-
-export function useGetWeaponsBgmid<TData = Awaited<ReturnType<typeof getWeaponsBgmid>>, TError = WeaponMessageResponse>(
- params: undefined |  GetWeaponsBgmidParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>> & Pick<
+export function useGetWeaponsBgmid<
+  TData = Awaited<ReturnType<typeof getWeaponsBgmid>>,
+  TError = WeaponMessageResponse,
+>(
+  params: undefined | GetWeaponsBgmidParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>> &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWeaponsBgmid>>,
           TError,
           Awaited<ReturnType<typeof getWeaponsBgmid>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetWeaponsBgmid<TData = Awaited<ReturnType<typeof getWeaponsBgmid>>, TError = WeaponMessageResponse>(
- params?: GetWeaponsBgmidParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>> & Pick<
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetWeaponsBgmid<
+  TData = Awaited<ReturnType<typeof getWeaponsBgmid>>,
+  TError = WeaponMessageResponse,
+>(
+  params?: GetWeaponsBgmidParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>> &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWeaponsBgmid>>,
           TError,
           Awaited<ReturnType<typeof getWeaponsBgmid>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetWeaponsBgmid<TData = Awaited<ReturnType<typeof getWeaponsBgmid>>, TError = WeaponMessageResponse>(
- params?: GetWeaponsBgmidParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        'initialData'
+      >
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetWeaponsBgmid<
+  TData = Awaited<ReturnType<typeof getWeaponsBgmid>>,
+  TError = WeaponMessageResponse,
+>(
+  params?: GetWeaponsBgmidParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
  * @summary 武器検索（1件）
  */
 
-export function useGetWeaponsBgmid<TData = Awaited<ReturnType<typeof getWeaponsBgmid>>, TError = WeaponMessageResponse>(
- params?: GetWeaponsBgmidParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+export function useGetWeaponsBgmid<
+  TData = Awaited<ReturnType<typeof getWeaponsBgmid>>,
+  TError = WeaponMessageResponse,
+>(
+  params?: GetWeaponsBgmidParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWeaponsBgmid>>, TError, TData>>
+    request?: SecondParameter<typeof customInstance>
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetWeaponsBgmidQueryOptions(params, options)
 
-  const queryOptions = getGetWeaponsBgmidQueryOptions(params,options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>
+  }
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+  query.queryKey = queryOptions.queryKey
 
-  query.queryKey = queryOptions.queryKey ;
-
-  return query;
+  return query
 }
-
-
-
-
