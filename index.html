@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hunter's Guild Field Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              // Custom colors for light mode (parchment feel)
+              parchment: {
+                50: '#fbf9f5',
+                100: '#f5f2eb',
+                200: '#e6e2d3',
+                300: '#d6cfb8',
+                800: '#5c5446',
+                900: '#3d382e',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+      // ダークモードの初期設定（CSSが読み込まれる前に実行）
+      if (!('theme' in localStorage) || localStorage.theme === 'system') {
+        // LocalStorageにthemeがない、またはsystemの場合、OSの設定を見る
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark');
+        }
+        localStorage.setItem('theme', 'system');
+      } else if (localStorage.theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+
+      // OSの設定が変更された際に自動で反映
+      const mediaQueryListener = (e) => {
+        if (localStorage.theme === 'system') {
+          if (e.matches) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+      };
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', mediaQueryListener);
+    </script>
+    <style>
+      /* Custom scrollbar for that ancient mechanism feel */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #1c1917;
+      }
+      .light ::-webkit-scrollbar-track {
+        background: #e6e2d3;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #78350f;
+        border: 1px solid #451a03;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #92400e;
+      }
+      body {
+        /* Default fallback */
+        background-color: #0c0a09; 
+      }
+      .font-cinzel { font-family: 'Cinzel', serif; }
+      .font-mincho { font-family: 'Shippori Mincho', serif; }
+
+      /* View Transition API Customization */
+      ::view-transition-group(hero-image) {
+        animation-duration: 0.5s;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      ::view-transition-old(hero-image),
+      ::view-transition-new(hero-image) {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
+      
+      /* Fade other elements */
+      ::view-transition-old(root),
+      ::view-transition-new(root) {
+        animation-duration: 0.3s;
+      }
+    </style>
+</head>
+  <body>
+    <div id="root"></div>
+     <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
