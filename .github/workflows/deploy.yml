@@ -1,0 +1,58 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+  
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node.js
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10.12.1
+          node-version: 20
+
+      - uses: actions/cache@v3
+        id: node_modules_cache_id
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-setup-${{ env.cache-name }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+ 
+      - if: ${{ steps.node_modules_cache_id.outputs.cache-hit != 'true' }}
+        run: | 
+          pnpm install
+ 
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pnpm
+            ${{ github.workspace }}/frontend/.next/cache
+          key: ${{ runner.os }}-react-${{ hashFiles('frontend/pnpm-lock.yaml') }}-${{ hashFiles('frontend/**/*.[jt]s', 'frontend/**/*.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-react-${{ hashFiles('frontend/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-react-
+ 
+      - name: Run build
+        run: |
+          pnpm run build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: hunters-notes
+          directory: dist
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
