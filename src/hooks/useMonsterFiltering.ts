@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Monster } from '@/lib/types'
 import { SortOption, ITEMS_PER_PAGE, TEMPORARY_TOTAL_MONSTERS } from '@/constants/filters'
 
@@ -9,6 +9,7 @@ interface UseMonsterFilteringParams {
   sortOption: SortOption
   hasActiveFilters: boolean
   apiTotal?: number
+  currentPage: number
 }
 
 export const useMonsterFiltering = ({
@@ -18,9 +19,8 @@ export const useMonsterFiltering = ({
   sortOption,
   hasActiveFilters,
   apiTotal,
+  currentPage,
 }: UseMonsterFilteringParams) => {
-  const [currentPage, setCurrentPage] = useState(1)
-
   // フィルタとソートを適用
   const allFilteredMonsters = useMemo(() => {
     return monsters
@@ -69,8 +69,6 @@ export const useMonsterFiltering = ({
 
   return {
     filteredMonsters,
-    currentPage,
-    setCurrentPage,
     totalPages,
     totalFilteredItems,
   }

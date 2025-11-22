@@ -56,6 +56,7 @@ export default function App() {
     resetFilters,
   } = useFilters()
   const { transitionId, startTransition, setTransitionId } = useViewTransition()
+  const [currentPage, setCurrentPage] = useState(1)
 
   // フィルタやソートが適用されているか判定
   const hasActiveFilters = searchQuery || filterHasActive
@@ -64,9 +65,9 @@ export default function App() {
   const queryParams = useMemo(
     () => ({
       limit: hasActiveFilters ? 200 : ITEMS_PER_PAGE,
-      offset: 0,
+      offset: hasActiveFilters ? 0 : (currentPage - 1) * ITEMS_PER_PAGE,
     }),
-    [hasActiveFilters]
+    [hasActiveFilters, currentPage]
   )
 
   const {
@@ -82,15 +83,15 @@ export default function App() {
   }, [apiMonsters])
 
   // フィルタリングとページネーション
-  const { filteredMonsters, currentPage, setCurrentPage, totalPages, totalFilteredItems } =
-    useMonsterFiltering({
-      monsters,
-      searchQuery,
-      filterElement,
-      sortOption,
-      hasActiveFilters: !!hasActiveFilters,
-      apiTotal,
-    })
+  const { filteredMonsters, totalPages, totalFilteredItems } = useMonsterFiltering({
+    monsters,
+    searchQuery,
+    filterElement,
+    sortOption,
+    hasActiveFilters: !!hasActiveFilters,
+    apiTotal,
+    currentPage,
+  })
 
   // Handlers
   const handleFilterChange = (element: string) => {
