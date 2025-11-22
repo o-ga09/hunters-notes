@@ -1,10 +1,10 @@
-import React from "react";
-import { Monster } from "../lib/types";
-import { StarRating } from "./StarRating";
-import { Shield, Crosshair, Map, Ruler, AlertTriangle } from "lucide-react";
+import React from 'react'
+import { Monster } from '../lib/types'
+import { StarRating } from './StarRating'
+import { Shield, Crosshair, Map, Ruler, AlertTriangle } from 'lucide-react'
 
 interface MonsterDetailProps {
-  monster: Monster;
+  monster: Monster
 }
 
 export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
@@ -16,10 +16,11 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
       {/* Header Section */}
       <div className="relative h-80 md:h-96 overflow-hidden">
         <img
-          src={`https://picsum.photos/seed/${monster.name}/800/600`}
+          id={`monster-detail-image-${monster.monsterId || monster.name}`}
+          src={monster.imageUrl || `https://picsum.photos/seed/${monster.name}/800/600`}
           alt={monster.name}
           className="w-full h-full object-cover opacity-100 dark:opacity-60 sepia-[0.3] dark:sepia-0 transition-all duration-500"
-          style={{ viewTransitionName: "hero-image" }}
+          style={{ viewTransitionName: 'hero-image' }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#f5f2eb]/30 dark:via-[#1a1816]/60 to-[#f5f2eb] dark:to-[#1a1816]"></div>
 
@@ -123,12 +124,10 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
                   ELEMENTS
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {monster.elements.map((e) => (
+                  {monster.elements.map(e => (
                     <Badge key={e} text={e} color="red" />
                   ))}
-                  {monster.elements.length === 0 && (
-                    <span className="text-stone-500">-</span>
-                  )}
+                  {monster.elements.length === 0 && <span className="text-stone-500">-</span>}
                 </div>
               </div>
 
@@ -137,12 +136,10 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
                   AILMENTS
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {monster.ailments.map((e) => (
+                  {monster.ailments.map(e => (
                     <Badge key={e} text={e} color="purple" />
                   ))}
-                  {monster.ailments.length === 0 && (
-                    <span className="text-stone-500">-</span>
-                  )}
+                  {monster.ailments.length === 0 && <span className="text-stone-500">-</span>}
                 </div>
               </div>
 
@@ -200,8 +197,8 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 // Helper Components
 const BookIcon = () => (
@@ -218,28 +215,21 @@ const BookIcon = () => (
     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
   </svg>
-);
+)
 
-const Badge: React.FC<{ text: string; color: "red" | "purple" }> = ({
-  text,
-  color,
-}) => {
+const Badge: React.FC<{ text: string; color: 'red' | 'purple' }> = ({ text, color }) => {
   const colors = {
-    red: "bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-200 dark:border-red-900",
+    red: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-200 dark:border-red-900',
     purple:
-      "bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-900",
-  };
-  return (
-    <span className={`px-2 py-0.5 text-xs border rounded ${colors[color]}`}>
-      {text}
-    </span>
-  );
-};
+      'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 border-purple-200 dark:border-purple-900',
+  }
+  return <span className={`px-2 py-0.5 text-xs border rounded ${colors[color]}`}>{text}</span>
+}
 
 const getRarityColor = (rarity: number) => {
-  if (rarity >= 9) return "bg-cyan-300 dark:bg-cyan-400";
-  if (rarity >= 7) return "bg-purple-300 dark:bg-purple-400";
-  if (rarity >= 5) return "bg-yellow-300 dark:bg-yellow-400";
-  if (rarity >= 4) return "bg-green-300 dark:bg-green-400";
-  return "bg-stone-300 dark:bg-stone-400";
-};
+  if (rarity >= 9) return 'bg-cyan-300 dark:bg-cyan-400'
+  if (rarity >= 7) return 'bg-purple-300 dark:bg-purple-400'
+  if (rarity >= 5) return 'bg-yellow-300 dark:bg-yellow-400'
+  if (rarity >= 4) return 'bg-green-300 dark:bg-green-400'
+  return 'bg-stone-300 dark:bg-stone-400'
+}

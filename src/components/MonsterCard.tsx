@@ -1,14 +1,35 @@
 import React from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Monster } from '../lib/types'
 import { Flame, Droplets, Zap, Snowflake, Skull, Swords, AlertTriangle } from 'lucide-react'
 
 interface MonsterCardProps {
   monster: Monster
-  onClick: () => void
-  activeTransition?: boolean
 }
 
-export const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onClick, activeTransition }) => {
+export const MonsterCard: React.FC<MonsterCardProps> = ({ monster }) => {
+  const navigate = useNavigate()
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // View Transitions APIをサポートしている場合
+    if (document.startViewTransition) {
+      e.preventDefault()
+
+      const img = document.getElementById(`monster-image-${monster.monsterId || monster.name}`)
+      if (img) {
+        img.style.viewTransitionName = 'hero-image'
+      }
+
+      document.startViewTransition(() => {
+        // TanStack Routerでナビゲーション
+        navigate({
+          to: '/$monsterId',
+          params: { monsterId: monster.monsterId || monster.name },
+        })
+      })
+    }
+  }
+
   const getElementIcon = (elements: string[]) => {
     if (elements.includes('火') || elements.includes('Fire'))
       return <Flame className="w-3 h-3 sm:w-5 sm:h-5 text-red-600 dark:text-red-500" />
@@ -24,18 +45,20 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onClick, acti
   }
 
   return (
-    <div
-      onClick={onClick}
+    <Link
+      to="/$monsterId"
+      params={{ monsterId: monster.monsterId || monster.name }}
+      onClick={handleClick}
       className="group relative bg-[#f5f2eb] dark:bg-[#1a1918] border border-stone-300 dark:border-stone-800 hover:border-yellow-600/80 dark:hover:border-yellow-600/80 transition-all duration-300 rounded shadow-lg hover:shadow-2xl hover:shadow-yellow-900/10 hover:-translate-y-1 cursor-pointer overflow-hidden h-full flex flex-col"
     >
       {/* Image Section */}
       <div className="relative aspect-square w-full overflow-hidden bg-stone-200 dark:bg-stone-900">
         <img
-          id={`monster-image-${monster.name}`}
+          id={`monster-image-${monster.monsterId || monster.name}`}
           src={monster.imageUrl || `https://picsum.photos/seed/${monster.name}/500/500`}
           alt={monster.name}
           className="w-full h-full object-cover opacity-100 dark:opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 sepia-[0.2] dark:sepia-0"
-          style={activeTransition ? { viewTransitionName: 'hero-image' } : undefined}
+          style={{ viewTransitionName: 'hero-image' }}
         />
 
         {/* Overlay Gradient */}
@@ -103,6 +126,6 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onClick, acti
       {/* Corner accents */}
       <div className="absolute bottom-0 left-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-l border-yellow-600 dark:border-yellow-800 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       <div className="absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-r border-yellow-600 dark:border-yellow-800 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-    </div>
+    </Link>
   )
 }

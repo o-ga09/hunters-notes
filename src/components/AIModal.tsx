@@ -1,15 +1,15 @@
 import { useState } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { X, Send, Loader2 } from 'lucide-react'
 import { GeminiService } from '../services/gemin'
-import { Monster } from '../lib/types'
 
 interface AIModalProps {
   isOpen: boolean
   onClose: () => void
-  onMonsterFound: (monster: Monster) => void
 }
 
-export const AIModal: React.FC<AIModalProps> = ({ isOpen, onClose, onMonsterFound }) => {
+export const AIModal: React.FC<AIModalProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate()
   const [question, setQuestion] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -26,7 +26,7 @@ export const AIModal: React.FC<AIModalProps> = ({ isOpen, onClose, onMonsterFoun
     try {
       const result = await GeminiService.searchMonster(question)
       if (result) {
-        onMonsterFound(result)
+        navigate({ to: '/$monsterId', params: { monsterId: result.monsterId || result.name } })
         onClose()
         setQuestion('')
       } else {

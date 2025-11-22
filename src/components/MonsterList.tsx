@@ -5,17 +5,10 @@ import { MonsterCard } from './MonsterCard'
 
 interface MonsterListProps {
   monsters: Monster[]
-  onSelectMonster: (monster: Monster) => void
   onResetFilters: () => void
-  transitionId: string | null
 }
 
-export const MonsterList: FC<MonsterListProps> = ({
-  monsters,
-  onSelectMonster,
-  onResetFilters,
-  transitionId,
-}) => {
+export const MonsterList: FC<MonsterListProps> = ({ monsters, onResetFilters }) => {
   if (monsters.length === 0) {
     return (
       <div className="col-span-full flex flex-col items-center justify-center py-20 text-stone-500 dark:text-stone-600 font-mincho">
@@ -34,12 +27,7 @@ export const MonsterList: FC<MonsterListProps> = ({
   return (
     <>
       {monsters.map(monster => (
-        <MonsterCard
-          key={monster.name}
-          monster={monster}
-          onClick={() => onSelectMonster(monster)}
-          activeTransition={transitionId === monster.name}
-        />
+        <MonsterCard key={monster.monsterId || monster.name} monster={monster} />
       ))}
     </>
   )
