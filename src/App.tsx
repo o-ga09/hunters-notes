@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { flushSync } from 'react-dom'
+import axios from 'axios'
 import {
   Search,
   BookOpen,
@@ -47,142 +48,6 @@ declare module 'react' {
   }
 }
 
-const INITIAL_MONSTERS_DATA: Monster[] = [
-  {
-    name: 'リオレウス',
-    title: '空の王者',
-    species: '飛竜種',
-    description:
-      '天空を舞う飛竜の王。優れた飛行能力と強力な火炎ブレスで縄張りを支配する。毒爪による強襲にも注意が必要。',
-    elements: ['火'],
-    ailments: ['毒', '火属性やられ'],
-    weaknesses: [
-      { element: '龍', stars: 3 },
-      { element: '雷', stars: 2 },
-    ],
-    habitats: ['古代樹の森', '大社跡'],
-    threatLevel: 6,
-    size: { min: 1600, max: 2200 },
-    keyDrops: [
-      { name: '火竜の鱗', rarity: 4 },
-      { name: '火竜の紅玉', rarity: 7 },
-    ],
-    tips: ['閃光玉で撃ち落とすことが有効', '解毒薬を常備すること', '翼を破壊して飛行能力を奪う'],
-  },
-  {
-    name: 'ジンオウガ',
-    title: '雷狼竜',
-    species: '牙竜種',
-    description:
-      '雷光を纏う牙竜。超帯電状態になると攻撃力と速度が飛躍的に上昇する。俊敏な動きでハンターを翻弄する。',
-    elements: ['雷'],
-    ailments: ['雷属性やられ', '気絶'],
-    weaknesses: [
-      { element: '氷', stars: 3 },
-      { element: '水', stars: 2 },
-    ],
-    habitats: ['渓流', '陸珊瑚の台地'],
-    threatLevel: 6,
-    size: { min: 1300, max: 1900 },
-    keyDrops: [
-      { name: '雷狼竜の蓄電殻', rarity: 4 },
-      { name: '雷狼竜の碧玉', rarity: 7 },
-    ],
-    tips: ['超帯電状態は怯ませることで解除可能', '氷属性の武器が有効', '連続攻撃後の隙を狙う'],
-  },
-  {
-    name: 'ナルガクルガ',
-    title: '迅竜',
-    species: '飛竜種',
-    description:
-      '暗闇に潜み、目にも止まらぬ速さで獲物を狩る飛竜。鋭い刃翼と伸縮自在の尻尾による攻撃は脅威。',
-    elements: [],
-    ailments: ['裂傷'],
-    weaknesses: [
-      { element: '雷', stars: 3 },
-      { element: '火', stars: 2 },
-    ],
-    habitats: ['古代樹の森', '水没林'],
-    threatLevel: 5,
-    size: { min: 1700, max: 2100 },
-    keyDrops: [
-      { name: '迅竜の黒毛', rarity: 4 },
-      { name: '迅竜の延髄', rarity: 6 },
-    ],
-    tips: ['音爆弾で体勢を崩せる', '怒り時は落とし穴が無効', '尻尾攻撃の予備動作を見極める'],
-  },
-  {
-    name: 'タマミツネ',
-    title: '泡狐竜',
-    species: '海竜種',
-    description:
-      '特殊な分泌液で泡を作り出し、その上を滑るように動く海竜。優雅な動きとは裏腹に、泡による足止めは厄介。',
-    elements: ['水'],
-    ailments: ['泡やられ', '水属性やられ'],
-    weaknesses: [
-      { element: '雷', stars: 3 },
-      { element: '龍', stars: 2 },
-    ],
-    habitats: ['大社跡', '水没林'],
-    threatLevel: 6,
-    size: { min: 1800, max: 2300 },
-    keyDrops: [
-      { name: '泡狐竜の紫毛', rarity: 4 },
-      { name: '泡狐竜の水玉', rarity: 7 },
-    ],
-    tips: ['泡やられは消散剤で解除', '頭部と背ビレが弱点', '泡を利用したスライディング攻撃に注意'],
-  },
-  {
-    name: 'マガイマガド',
-    title: '怨虎竜',
-    species: '牙竜種',
-    description:
-      '怨念のような紫色のガス「鬼火」を纏う牙竜。鬼火を利用した爆発的な攻撃と、強靭な甲殻を持つ。',
-    elements: ['爆破'],
-    ailments: ['鬼火やられ', '爆破やられ'],
-    weaknesses: [
-      { element: '水', stars: 3 },
-      { element: '雷', stars: 2 },
-    ],
-    habitats: ['大社跡', '溶岩洞'],
-    threatLevel: 8,
-    size: { min: 1900, max: 2400 },
-    keyDrops: [
-      { name: '怨虎竜の紫玉', rarity: 7 },
-      { name: '怨虎竜の兜角', rarity: 5 },
-    ],
-    tips: [
-      '鬼火やられは翔蟲移動で解除・設置可能',
-      '鬼火を纏った部位は肉質が軟化する',
-      '大技の予備動作が大きい',
-    ],
-  },
-  {
-    name: 'ティガレックス',
-    title: '轟竜',
-    species: '飛竜種',
-    description: '原始的な骨格を残す飛竜。強靭な四肢を使った突進と、周囲を震わせる大咆哮が特徴。',
-    elements: [],
-    ailments: [],
-    weaknesses: [
-      { element: '雷', stars: 3 },
-      { element: '龍', stars: 2 },
-    ],
-    habitats: ['砂原', '寒冷群島'],
-    threatLevel: 6,
-    size: { min: 1800, max: 2400 },
-    keyDrops: [
-      { name: '轟竜の牙', rarity: 4 },
-      { name: '轟竜のアギト', rarity: 7 },
-    ],
-    tips: [
-      '突進は壁に誘導して激突させる',
-      '疲労時は動きが鈍りチャンスとなる',
-      '咆哮は範囲が広いため注意',
-    ],
-  },
-]
-
 type SortOption = 'default' | 'threat_desc' | 'threat_asc' | 'name_asc'
 type Theme = 'system' | 'light' | 'dark'
 
@@ -213,8 +78,8 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1)
   const ITEMS_PER_PAGE = 20
 
-  // API Data - すべてのデータを取得（クライアントサイドページネーション）
-  const { monsters: apiMonsters, isLoading: apiLoading, error: apiError } = useMonsters()
+  // TODO: APIがtotalフィールドで正しい総件数を返すようになったら、この定数を削除してapiTotalを使用する
+  const TEMPORARY_TOTAL_MONSTERS = 250
 
   // State - Initialize theme from localStorage or system preference
   const [theme, setTheme] = useState<Theme>(() => {
@@ -234,6 +99,27 @@ export default function App() {
   const [sortOption, setSortOption] = useState<SortOption>('default')
   const [showFilters, setShowFilters] = useState(false)
 
+  // フィルタやソートが適用されているか判定
+  const hasActiveFilters = searchQuery || filterElement !== 'All' || sortOption !== 'default'
+
+  // API Data - サーバーサイドページネーション
+  // フィルタなし: 現在のページのみ取得（20件）
+  // フィルタあり: 検索・フィルタ用に多めに取得（200件）
+  const queryParams = useMemo(
+    () => ({
+      limit: hasActiveFilters ? 200 : ITEMS_PER_PAGE,
+      offset: hasActiveFilters ? 0 : (currentPage - 1) * ITEMS_PER_PAGE,
+    }),
+    [hasActiveFilters, currentPage, ITEMS_PER_PAGE]
+  )
+
+  const {
+    monsters: apiMonsters,
+    isLoading: apiLoading,
+    error: apiError,
+    total: apiTotal,
+  } = useMonsters(queryParams)
+
   // フィルタやソート変更時にページをリセット
   const handleFilterChange = (element: string) => {
     setFilterElement(element)
@@ -248,51 +134,60 @@ export default function App() {
   // View Transition
   const [transitionId, setTransitionId] = useState<string | null>(null)
 
-  // Combine API monsters with local monsters and fallback data
+  // Convert API monsters
   const monsters = useMemo(() => {
-    const convertedApiMonsters = convertApiMonstersToMonsters(apiMonsters)
-    // APIデータが取得できた場合はそれを使用、できない場合はフォールバックデータを使用
-    return convertedApiMonsters.length > 0 ? convertedApiMonsters : INITIAL_MONSTERS_DATA
+    return convertApiMonstersToMonsters(apiMonsters)
   }, [apiMonsters])
 
   // Apply Derived State - フィルタとソート
-  const allFilteredMonsters = monsters
-    .filter(m => {
-      const matchesSearch =
-        m.name.includes(searchQuery) ||
-        m.species.includes(searchQuery) ||
-        m.description.includes(searchQuery)
+  const allFilteredMonsters = useMemo(() => {
+    return monsters
+      .filter(m => {
+        const matchesSearch =
+          m.name.includes(searchQuery) ||
+          m.species.includes(searchQuery) ||
+          m.description.includes(searchQuery)
 
-      const matchesElement =
-        filterElement === 'All'
-          ? true
-          : filterElement === '無'
-            ? m.elements.length === 0
-            : m.elements.includes(filterElement)
+        const matchesElement =
+          filterElement === 'All'
+            ? true
+            : filterElement === '無'
+              ? m.elements.length === 0
+              : m.elements.includes(filterElement)
 
-      return matchesSearch && matchesElement
-    })
-    .sort((a, b) => {
-      switch (sortOption) {
-        case 'threat_desc':
-          return b.threatLevel - a.threatLevel
-        case 'threat_asc':
-          return a.threatLevel - b.threatLevel
-        case 'name_asc':
-          return a.name.localeCompare(b.name, 'ja')
-        default:
-          return 0
-      }
-    })
+        return matchesSearch && matchesElement
+      })
+      .sort((a, b) => {
+        switch (sortOption) {
+          case 'threat_desc':
+            return b.threatLevel - a.threatLevel
+          case 'threat_asc':
+            return a.threatLevel - a.threatLevel
+          case 'name_asc':
+            return a.name.localeCompare(b.name, 'ja')
+          default:
+            return 0
+        }
+      })
+  }, [monsters, searchQuery, filterElement, sortOption])
 
   // ページネーション用の計算
-  const totalFilteredItems = allFilteredMonsters.length
+  // フィルタあり: クライアントサイドで処理（取得した200件の範囲内）
+  // フィルタなし: サーバーサイドで処理
+  // TODO: APIのtotalが正しく実装されたら、TEMPORARY_TOTAL_MONSTERSを削除してapiTotalのみを使用する
+  const totalFilteredItems = hasActiveFilters
+    ? allFilteredMonsters.length
+    : apiTotal && apiTotal > ITEMS_PER_PAGE
+      ? apiTotal
+      : TEMPORARY_TOTAL_MONSTERS
   const totalPages = Math.ceil(totalFilteredItems / ITEMS_PER_PAGE)
 
   // 現在のページに表示するデータ
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-  const endIndex = startIndex + ITEMS_PER_PAGE
-  const filteredMonsters = allFilteredMonsters.slice(startIndex, endIndex)
+  // フィルタあり: クライアントサイドでスライス
+  // フィルタなし: APIから取得したデータをそのまま表示
+  const filteredMonsters = hasActiveFilters
+    ? allFilteredMonsters.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+    : monsters
 
   const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newTheme = e.target.value as Theme
@@ -538,8 +433,8 @@ export default function App() {
         </header>
 
         <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-          {/* Error Message */}
-          {(error || apiError) && (
+          {/* Error Message - キャンセルエラーは表示しない */}
+          {(error || (apiError && !axios.isCancel(apiError))) && (
             <div className="max-w-2xl mx-auto mb-8 p-4 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded flex items-center gap-3 text-red-800 dark:text-red-200">
               <AlertCircle className="w-6 h-6 text-red-500" />
               <p>{error || apiError?.message || 'エラーが発生しました'}</p>
@@ -557,7 +452,7 @@ export default function App() {
           )}
 
           {/* Main Content */}
-          {!loading && !apiLoading && !error && !apiError && (
+          {!loading && !apiLoading && !error && !(apiError && !axios.isCancel(apiError)) && (
             <>
               {selectedMonster ? (
                 <div className="animate-fadeIn">
