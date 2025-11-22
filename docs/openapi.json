@@ -581,6 +581,10 @@
             "description": "モンスターのカテゴリ",
             "type": "string"
           },
+          "element": {
+            "description": "モンスターの属性",
+            "type": "string"
+          },
           "first_weak_attack": {
             "description": "最有効弱点",
             "type": "string"

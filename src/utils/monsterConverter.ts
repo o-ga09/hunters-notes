@@ -7,16 +7,13 @@ import type { Monster } from '@/lib/types'
 export const convertApiMonsterToMonster = (apiMonster: MonsterResponseJson): Monster | null => {
   if (!apiMonster.name) return null
 
-  // 属性をマッピング
+  // モンスターが持つ属性（APIから直接取得）
   const elements: string[] = []
-  if (apiMonster.first_weak_element) {
-    elements.push(apiMonster.first_weak_element)
-  }
-  if (
-    apiMonster.second_weak_element &&
-    apiMonster.second_weak_element !== apiMonster.first_weak_element
-  ) {
-    elements.push(apiMonster.second_weak_element)
+  if (apiMonster.element) {
+    elements.push(apiMonster.element)
+  } else {
+    // 属性情報がない場合は無属性
+    elements.push('無')
   }
 
   // 弱点をマッピング

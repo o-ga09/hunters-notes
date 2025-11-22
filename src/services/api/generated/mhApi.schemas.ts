@@ -50,6 +50,8 @@ export interface MonsterResponseJson {
   bgm?: MonsterMusic[];
   /** モンスターのカテゴリ */
   category?: string;
+  /** モンスターの属性 */
+  element?: string;
   /** 最有効弱点 */
   first_weak_attack?: string;
   /** 最有効属性 */
