@@ -1,6 +1,6 @@
-import { FC, useState, useMemo } from 'react'
+import { FC, useState, useMemo, useEffect } from 'react'
 import axios from 'axios'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { Monster } from '@/lib/types'
 import { GeminiService } from '@/services/gemin'
 import { Loader } from '@/components/Loader'
@@ -21,6 +21,7 @@ import { ITEMS_PER_PAGE } from '@/constants/filters'
 
 export const MonsterListPage: FC = () => {
   const navigate = useNavigate()
+  const search = useSearch({ from: '/' })
 
   // State
   const [searchQuery, setSearchQuery] = useState('')
@@ -40,7 +41,14 @@ export const MonsterListPage: FC = () => {
     hasActiveFilters: filterHasActive,
     resetFilters,
   } = useFilters()
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(search.page || 1)
+
+  // URL検索パラメータと状態を同期
+  useEffect(() => {
+    if (search.page && search.page !== currentPage) {
+      setCurrentPage(search.page)
+    }
+  }, [search.page, currentPage])
 
   // フィルタやソートが適用されているか判定
   const hasActiveFilters = searchQuery || filterHasActive
@@ -80,19 +88,27 @@ export const MonsterListPage: FC = () => {
   // Handlers
   const handleFilterChange = (element: string) => {
     setFilterElement(element)
-    setCurrentPage(1)
+    updatePage(1)
   }
 
   const handleSortChange = (option: string) => {
     setSortOption(option as any)
-    setCurrentPage(1)
+    updatePage(1)
+  }
+
+  const updatePage = (page: number) => {
+    setCurrentPage(page)
+    navigate({
+      to: '/',
+      search: { page },
+    })
   }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!searchQuery.trim()) return
 
-    setCurrentPage(1)
+    updatePage(1)
 
     const existing = monsters.find(m => m.name === searchQuery || m.name.includes(searchQuery))
     if (existing) {
@@ -124,13 +140,13 @@ export const MonsterListPage: FC = () => {
   const clearSearch = () => {
     setSearchQuery('')
     setError(null)
-    setCurrentPage(1)
+    updatePage(1)
   }
 
   const handleResetFilters = () => {
     resetFilters()
     setSearchQuery('')
-    setCurrentPage(1)
+    updatePage(1)
   }
 
   return (
@@ -187,7 +203,7 @@ export const MonsterListPage: FC = () => {
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={setCurrentPage}
+                onPageChange={updatePage}
                 totalItems={totalFilteredItems}
                 itemsPerPage={ITEMS_PER_PAGE}
               />
