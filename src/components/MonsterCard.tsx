@@ -1,49 +1,27 @@
-import React from "react";
-import { Monster } from "../lib/types";
-import {
-  Flame,
-  Droplets,
-  Zap,
-  Snowflake,
-  Skull,
-  Swords,
-  AlertTriangle,
-} from "lucide-react";
+import React from 'react'
+import { Monster } from '../lib/types'
+import { Flame, Droplets, Zap, Snowflake, Skull, Swords, AlertTriangle } from 'lucide-react'
 
 interface MonsterCardProps {
-  monster: Monster;
-  onClick: () => void;
-  activeTransition?: boolean;
+  monster: Monster
+  onClick: () => void
+  activeTransition?: boolean
 }
 
-export const MonsterCard: React.FC<MonsterCardProps> = ({
-  monster,
-  onClick,
-  activeTransition,
-}) => {
+export const MonsterCard: React.FC<MonsterCardProps> = ({ monster, onClick, activeTransition }) => {
   const getElementIcon = (elements: string[]) => {
-    if (elements.includes("火") || elements.includes("Fire"))
-      return (
-        <Flame className="w-3 h-3 sm:w-5 sm:h-5 text-red-600 dark:text-red-500" />
-      );
-    if (elements.includes("水") || elements.includes("Water"))
-      return (
-        <Droplets className="w-3 h-3 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-500" />
-      );
-    if (elements.includes("雷") || elements.includes("Thunder"))
-      return (
-        <Zap className="w-3 h-3 sm:w-5 sm:h-5 text-yellow-600 dark:text-yellow-400" />
-      );
-    if (elements.includes("氷") || elements.includes("Ice"))
-      return (
-        <Snowflake className="w-3 h-3 sm:w-5 sm:h-5 text-cyan-600 dark:text-cyan-300" />
-      );
-    if (elements.includes("龍") || elements.includes("Dragon"))
-      return (
-        <Skull className="w-3 h-3 sm:w-5 sm:h-5 text-purple-700 dark:text-purple-500" />
-      );
-    return <Swords className="w-3 h-3 sm:w-5 sm:h-5 text-stone-500" />;
-  };
+    if (elements.includes('火') || elements.includes('Fire'))
+      return <Flame className="w-3 h-3 sm:w-5 sm:h-5 text-red-600 dark:text-red-500" />
+    if (elements.includes('水') || elements.includes('Water'))
+      return <Droplets className="w-3 h-3 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-500" />
+    if (elements.includes('雷') || elements.includes('Thunder'))
+      return <Zap className="w-3 h-3 sm:w-5 sm:h-5 text-yellow-600 dark:text-yellow-400" />
+    if (elements.includes('氷') || elements.includes('Ice'))
+      return <Snowflake className="w-3 h-3 sm:w-5 sm:h-5 text-cyan-600 dark:text-cyan-300" />
+    if (elements.includes('龍') || elements.includes('Dragon'))
+      return <Skull className="w-3 h-3 sm:w-5 sm:h-5 text-purple-700 dark:text-purple-500" />
+    return <Swords className="w-3 h-3 sm:w-5 sm:h-5 text-stone-500" />
+  }
 
   return (
     <div
@@ -54,12 +32,10 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({
       <div className="relative aspect-square w-full overflow-hidden bg-stone-200 dark:bg-stone-900">
         <img
           id={`monster-image-${monster.name}`}
-          src={`https://picsum.photos/seed/${monster.name}/500/500`}
+          src={monster.imageUrl || `https://picsum.photos/seed/${monster.name}/500/500`}
           alt={monster.name}
           className="w-full h-full object-cover opacity-100 dark:opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 sepia-[0.2] dark:sepia-0"
-          style={
-            activeTransition ? { viewTransitionName: "hero-image" } : undefined
-          }
+          style={activeTransition ? { viewTransitionName: 'hero-image' } : undefined}
         />
 
         {/* Overlay Gradient */}
@@ -70,7 +46,7 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({
           <div className="bg-[#fbf9f5]/90 dark:bg-stone-900/80 backdrop-blur border border-stone-300 dark:border-stone-700 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full flex items-center gap-1 shadow-sm">
             {getElementIcon(monster.elements)}
             <span className="text-[8px] sm:text-[10px] font-bold text-stone-700 dark:text-stone-300 uppercase tracking-wider">
-              {monster.elements[0] || "無"}
+              {monster.elements[0] || '無'}
             </span>
           </div>
         </div>
@@ -113,7 +89,7 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className={`w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full ${i < Math.min(monster.threatLevel, 5) ? "bg-red-600" : "bg-stone-300 dark:bg-stone-800"}`}
+                  className={`w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full ${i < Math.min(monster.threatLevel, 5) ? 'bg-red-600' : 'bg-stone-300 dark:bg-stone-800'}`}
                 />
               ))}
             </div>
@@ -128,5 +104,5 @@ export const MonsterCard: React.FC<MonsterCardProps> = ({
       <div className="absolute bottom-0 left-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-l border-yellow-600 dark:border-yellow-800 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       <div className="absolute bottom-0 right-0 w-1.5 h-1.5 sm:w-2 sm:h-2 border-b border-r border-yellow-600 dark:border-yellow-800 opacity-0 group-hover:opacity-100 transition-opacity"></div>
     </div>
-  );
-};
+  )
+}
