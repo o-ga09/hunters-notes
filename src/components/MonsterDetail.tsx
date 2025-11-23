@@ -1,13 +1,41 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Monster } from '../lib/types'
 import { StarRating } from './StarRating'
-import { Shield, Crosshair, Map, Ruler, AlertTriangle } from 'lucide-react'
+import { Shield, Crosshair, Map, Ruler, AlertTriangle, Music, Volume2 } from 'lucide-react'
 
 interface MonsterDetailProps {
   monster: Monster
 }
 
+// YouTube URLからビデオIDを抽出
+const extractYouTubeId = (url: string): string | null => {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+    /youtube\.com\/embed\/([^&\n?#]+)/,
+  ]
+  for (const pattern of patterns) {
+    const match = url.match(pattern)
+    if (match) return match[1]
+  }
+  return null
+}
+
 export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
+  const [currentBgmIndex, setCurrentBgmIndex] = useState(0)
+
+  const hasBgm = monster.bgm && monster.bgm.length > 0
+  const currentBgm = hasBgm && monster.bgm ? monster.bgm[currentBgmIndex] : null
+  const youtubeId = currentBgm ? extractYouTubeId(currentBgm.url) : null
+
+  useEffect(() => {
+    // BGMが変更されたら選択をリセット
+    setCurrentBgmIndex(0)
+  }, [monster.monsterId])
+
+  const handleBgmSelect = (index: number) => {
+    setCurrentBgmIndex(index)
+  }
+
   return (
     <div className="bg-[#f5f2eb] dark:bg-[#1a1816] rounded-sm shadow-2xl overflow-hidden border-4 border-[#d6cfb8] dark:border-[#2c2520] relative transition-colors duration-500">
       {/* Paper Texture Overlay */}
@@ -51,7 +79,7 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
           {/* Description */}
           <section>
             <h3 className="text-yellow-800 dark:text-yellow-600 font-cinzel text-xl border-b border-stone-300 dark:border-stone-700 pb-2 mb-4 flex items-center gap-2">
-              <BookIcon /> Report
+              <BookIcon /> Report / レポート
             </h3>
             <p className="text-stone-700 dark:text-stone-300 leading-loose font-mincho text-lg text-justify">
               {monster.description}
@@ -61,7 +89,7 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
           {/* Weaknesses Table */}
           <section>
             <h3 className="text-yellow-800 dark:text-yellow-600 font-cinzel text-xl border-b border-stone-300 dark:border-stone-700 pb-2 mb-4 flex items-center gap-2">
-              <Crosshair className="w-5 h-5" /> Physiology & Weaknesses
+              <Crosshair className="w-5 h-5" /> Physiology & Weaknesses / 生態・弱点
             </h3>
             <div className="bg-white/50 dark:bg-stone-900/50 p-6 rounded border border-stone-200 dark:border-stone-800">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
@@ -88,7 +116,7 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
           {/* Key Drops */}
           <section>
             <h3 className="text-yellow-800 dark:text-yellow-600 font-cinzel text-xl border-b border-stone-300 dark:border-stone-700 pb-2 mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5" /> Material Drops
+              <Shield className="w-5 h-5" /> Material Drops / 素材ドロップ
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {monster.keyDrops.map((drop, idx) => (
@@ -115,7 +143,7 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
           {/* Basic Info Box */}
           <div className="bg-[#e6e2d3] dark:bg-[#23201d] p-6 border border-yellow-900/10 dark:border-yellow-900/30 shadow-inner">
             <h4 className="text-stone-500 dark:text-stone-500 text-xs font-bold uppercase mb-4 tracking-widest text-center border-b border-stone-300 dark:border-stone-700 pb-2">
-              Ecological Data
+              Ecological Data / 生態情報
             </h4>
 
             <div className="space-y-4">
@@ -177,7 +205,7 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
             <div className="absolute -inset-1 bg-yellow-600/10 dark:bg-yellow-900/20 blur-sm rounded"></div>
             <div className="relative bg-[#e8e4d9] dark:bg-[#2c2825] p-6 border border-yellow-200 dark:border-yellow-800">
               <h3 className="font-cinzel text-yellow-700 dark:text-yellow-500 mb-4 flex items-center gap-2">
-                Hunter's Notes
+                Hunter's Notes / ハンターズノート
               </h3>
               <ul className="space-y-4">
                 {monster.tips.map((tip, idx) => (
@@ -194,6 +222,102 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
               </ul>
             </div>
           </div>
+
+          {/* BGM Player */}
+          {hasBgm && (
+            <div className="relative">
+              <div className="absolute -inset-1 bg-blue-600/10 dark:bg-blue-900/20 blur-sm rounded"></div>
+              <div className="relative bg-[#e8e4d9] dark:bg-[#2c2825] p-6 border border-blue-200 dark:border-blue-800">
+                <h3 className="font-cinzel text-blue-700 dark:text-blue-500 mb-4 flex items-center gap-2">
+                  <Music className="w-5 h-5" />
+                  Battle Theme / 戦闘BGM
+                </h3>
+
+                {currentBgm && (
+                  <div className="space-y-4">
+                    <div className="bg-white/50 dark:bg-stone-900/50 p-4 rounded border border-stone-200 dark:border-stone-800">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-sm font-bold text-stone-700 dark:text-stone-300">
+                          {currentBgm.name}
+                        </span>
+                        <Volume2 className="w-4 h-4 text-stone-500" />
+                      </div>
+
+                      {youtubeId ? (
+                        <div className="aspect-video w-full rounded overflow-hidden">
+                          <iframe
+                            width="100%"
+                            height="100%"
+                            src={`https://www.youtube.com/embed/${youtubeId}`}
+                            title={currentBgm.name}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full"
+                          />
+                        </div>
+                      ) : (
+                        <div className="p-4 text-center text-sm text-stone-500 dark:text-stone-400">
+                          BGMの再生には対応していません
+                        </div>
+                      )}
+                    </div>
+
+                    {monster.bgm && monster.bgm.length > 1 && (
+                      <div className="space-y-2">
+                        <span className="text-xs text-stone-500 dark:text-stone-400">
+                          Other Themes:
+                        </span>
+                        <div className="grid grid-cols-1 gap-2">
+                          {monster.bgm.map((bgm, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handleBgmSelect(idx)}
+                              className={`text-left px-3 py-2 rounded text-sm transition-colors ${
+                                idx === currentBgmIndex
+                                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
+                                  : 'bg-stone-100 dark:bg-stone-800/40 text-stone-600 dark:text-stone-400 border border-stone-200 dark:border-stone-700 hover:bg-stone-200 dark:hover:bg-stone-700'
+                              }`}
+                            >
+                              {bgm.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Ranking */}
+          {monster.ranking && monster.ranking.length > 0 && (
+            <div className="relative">
+              <div className="absolute -inset-1 bg-amber-600/10 dark:bg-amber-900/20 blur-sm rounded"></div>
+              <div className="relative bg-[#e8e4d9] dark:bg-[#2c2825] p-6 border border-amber-200 dark:border-amber-800">
+                <h3 className="font-cinzel text-amber-700 dark:text-amber-500 mb-4 flex items-center gap-2">
+                  <TrophyIcon />
+                  Popularity Rankings / 人気投票ランキング
+                </h3>
+                <div className="space-y-3">
+                  {monster.ranking.map((rank, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between bg-white/50 dark:bg-stone-900/50 p-3 rounded border border-stone-200 dark:border-stone-800"
+                    >
+                      <span className="text-sm text-stone-600 dark:text-stone-400">
+                        {rank.voteYear}
+                      </span>
+                      <span className="text-lg font-bold text-amber-700 dark:text-amber-500">
+                        #{rank.ranking}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -214,6 +338,26 @@ const BookIcon = () => (
   >
     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+  </svg>
+)
+
+const TrophyIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-5 h-5"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+    <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+    <path d="M4 22h16" />
+    <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
   </svg>
 )
 

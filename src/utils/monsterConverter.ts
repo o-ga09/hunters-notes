@@ -49,6 +49,14 @@ export const convertApiMonsterToMonster = (apiMonster: MonsterResponseJson): Mon
     tips: [],
     imageUrl: apiMonster.image_url,
     monsterId: apiMonster.monster_id,
+    bgm: apiMonster.bgm?.map(b => ({
+      name: b.name ?? '',
+      url: b.url ?? '',
+    })),
+    ranking: apiMonster.ranking?.map(r => ({
+      ranking: r.ranking ?? '',
+      voteYear: r.vote_year ?? '',
+    })),
   }
 }
 

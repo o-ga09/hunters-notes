@@ -21,6 +21,16 @@ export interface DropItem {
   rarity: number // 1-10
 }
 
+export interface BGM {
+  name: string
+  url: string
+}
+
+export interface Ranking {
+  ranking: string
+  voteYear: string
+}
+
 export interface Monster {
   name: string
   title: string // e.g. "King of the Skies"
@@ -39,4 +49,6 @@ export interface Monster {
   tips: string[]
   imageUrl?: string
   monsterId?: string
+  bgm?: BGM[]
+  ranking?: Ranking[]
 }
