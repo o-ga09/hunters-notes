@@ -51,4 +51,5 @@ export interface Monster {
   monsterId?: string
   bgm?: BGM[]
   ranking?: Ranking[]
+  titles?: string[] // 登場作品リスト(初登場から昇順)
 }

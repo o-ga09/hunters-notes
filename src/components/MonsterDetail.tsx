@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { Monster } from '../lib/types'
 import { StarRating } from './StarRating'
-import { Shield, Crosshair, Map, Ruler, AlertTriangle, Music, Volume2 } from 'lucide-react'
+import {
+  Shield,
+  Crosshair,
+  Map,
+  Ruler,
+  AlertTriangle,
+  Music,
+  Volume2,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react'
 
 interface MonsterDetailProps {
   monster: Monster
@@ -22,6 +32,7 @@ const extractYouTubeId = (url: string): string | null => {
 
 export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
   const [currentBgmIndex, setCurrentBgmIndex] = useState(0)
+  const [isTitlesExpanded, setIsTitlesExpanded] = useState(false)
 
   const hasBgm = monster.bgm && monster.bgm.length > 0
   const currentBgm = hasBgm && monster.bgm ? monster.bgm[currentBgmIndex] : null
@@ -223,6 +234,64 @@ export const MonsterDetail: React.FC<MonsterDetailProps> = ({ monster }) => {
             </div>
           </div>
 
+          {/* Titles / 登場作品 */}
+          {monster.titles && monster.titles.length > 0 && (
+            <div className="relative">
+              <div className="absolute -inset-1 bg-green-600/10 dark:bg-green-900/20 blur-sm rounded"></div>
+              <div className="relative bg-[#e8e4d9] dark:bg-[#2c2825] p-6 border border-green-200 dark:border-green-800">
+                <h3 className="font-cinzel text-green-700 dark:text-green-500 mb-4 flex items-center gap-2">
+                  <GameIcon />
+                  Appearance / 登場作品
+                </h3>
+                <div className="space-y-3">
+                  {monster.titles.slice(0, isTitlesExpanded ? undefined : 3).map((title, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex items-center gap-3 p-3 rounded border transition-all ${
+                        idx === 0
+                          ? 'bg-green-50 dark:bg-green-900/30 border-green-300 dark:border-green-700'
+                          : 'bg-white/50 dark:bg-stone-900/50 border-stone-200 dark:border-stone-800'
+                      }`}
+                    >
+                      {idx === 0 && (
+                        <span className="px-2 py-1 bg-green-600 dark:bg-green-700 text-white text-[10px] font-bold rounded">
+                          初登場
+                        </span>
+                      )}
+                      <span
+                        className={`text-sm ${
+                          idx === 0
+                            ? 'font-bold text-green-800 dark:text-green-300'
+                            : 'text-stone-700 dark:text-stone-300'
+                        }`}
+                      >
+                        {title}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                {monster.titles.length > 3 && (
+                  <button
+                    onClick={() => setIsTitlesExpanded(!isTitlesExpanded)}
+                    className="w-full mt-4 py-2 px-4 bg-white/50 dark:bg-stone-900/50 hover:bg-white dark:hover:bg-stone-800 border border-stone-200 dark:border-stone-800 rounded text-sm text-stone-600 dark:text-stone-400 transition-colors flex items-center justify-center gap-2"
+                  >
+                    {isTitlesExpanded ? (
+                      <>
+                        <ChevronUp className="w-4 h-4" />
+                        閉じる
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4" />
+                        もっと見る ({monster.titles.length - 3}作品)
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* BGM Player */}
           {hasBgm && (
             <div className="relative">
@@ -358,6 +427,22 @@ const TrophyIcon = () => (
     <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
     <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
     <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+  </svg>
+)
+
+const GameIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-5 h-5"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="7" width="20" height="15" rx="2" ry="2" />
+    <polyline points="17 2 12 7 7 2" />
   </svg>
 )
 

@@ -57,6 +57,7 @@ export const convertApiMonsterToMonster = (apiMonster: MonsterResponseJson): Mon
       ranking: r.ranking ?? '',
       voteYear: r.vote_year ?? '',
     })),
+    titles: apiMonster.title ?? [],
   }
 }
 
